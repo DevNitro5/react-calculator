@@ -1,8 +1,14 @@
+import { Dispatch } from "react";
+import { CalculatorAction } from "../App";
+
 interface DigitButtonProps {
   digit: string;
-  dispatch: React.DispatchWithoutAction;
+  dispatch: Dispatch<CalculatorAction>;
 }
 
-export default function DigitButton({ digit }: DigitButtonProps) {
-  return <button>{digit}</button>;
+export default function DigitButton({ digit, dispatch }: DigitButtonProps) {
+  function handleClick() {
+    dispatch({ type: "Add-digit", digit });
+  }
+  return <button onClick={handleClick}>{digit}</button>;
 }
