@@ -1,33 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import { Reducer, useReducer } from "react";
+import DigitButton from "./components/DigitButton";
+import OperationButton from "./components/OperationButton";
+import calculatorReducer from "./reducer/calculatorReducer";
+import { formatOperand } from "./utils/utils";
+
+export type Operator = "+" | "-" | "÷" | "*";
+
+export interface CalculatorState {
+  leftOperand: string | null;
+  operator: Operator | null;
+  rightOperand: string | null;
+}
+export type CalculatorAction =
+  | {
+      type: "Add-digit";
+      digit: string;
+    }
+  | { type: "Choose-operation"; operator: Operator }
+  | { type: "Clear" | "Delete-digit" | "Evaluate" };
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [calculator, dispatch] = useReducer<
+    Reducer<CalculatorState, CalculatorAction>
+  >(calculatorReducer, {
+    leftOperand: null,
+    operator: null,
+    rightOperand: null,
+  });
+
+  const { leftOperand, operator, rightOperand } = calculator;
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="calculator-grid">
+      <div className="output">
+        <div className="previous-operand">
+          {formatOperand(leftOperand)} {operator}
+        </div>
+        <div className="current-operand">{formatOperand(rightOperand)}</div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <button className="span-two" onClick={() => dispatch({ type: "Clear" })}>
+        AC
+      </button>
+      <button onClick={() => dispatch({ type: "Delete-digit" })}>DEL</button>
+      <OperationButton operator="÷" dispatch={dispatch} />
+      <DigitButton digit="1" dispatch={dispatch} />
+      <DigitButton digit="2" dispatch={dispatch} />
+      <DigitButton digit="3" dispatch={dispatch} />
+      <OperationButton operator="*" dispatch={dispatch} />
+      <DigitButton digit="4" dispatch={dispatch} />
+      <DigitButton digit="5" dispatch={dispatch} />
+      <DigitButton digit="6" dispatch={dispatch} />
+      <OperationButton operator="+" dispatch={dispatch} />
+      <DigitButton digit="7" dispatch={dispatch} />
+      <DigitButton digit="8" dispatch={dispatch} />
+      <DigitButton digit="9" dispatch={dispatch} />
+      <OperationButton operator="-" dispatch={dispatch} />
+      <DigitButton digit="." dispatch={dispatch} />
+      <DigitButton digit="0" dispatch={dispatch} />
+      <button
+        className="span-two"
+        onClick={() => dispatch({ type: "Evaluate" })}
+      >
+        =
+      </button>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
