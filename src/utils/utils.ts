@@ -22,16 +22,12 @@ export function evaluate({
   const prev = parseFloat(leftOperand || "");
   const current = parseFloat(rightOperand || "");
 
-  if (isNaN(prev) || isNaN(current)) return "";
+  if (isNaN(prev) || isNaN(current)) return null;
 
-  switch (operator) {
-    case "+":
-      return prev + current;
-    case "-":
-      return prev - current;
-    case "*":
-      return prev * current;
-    case "÷":
-      return prev / current;
-  }
+  return {
+    "+": prev + current,
+    "-": prev - current,
+    "÷": prev / current,
+    "*": prev * current,
+  }[operator].toString();
 }
