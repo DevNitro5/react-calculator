@@ -1,11 +1,12 @@
 import { CalculatorAction, CalculatorState } from "../App";
-import { evaluate } from "../utils/utils";
+import { evaluate, type RemovesNullValue } from "../utils/utils";
 
 export default function calculatorReducer(
   state: CalculatorState,
   action: CalculatorAction
 ): CalculatorState {
   const { rightOperand, leftOperand, operator } = state;
+
   switch (action.type) {
     case "Add-digit": {
       const { digit } = action;
@@ -21,9 +22,13 @@ export default function calculatorReducer(
 
       if (rightOperand === null) return state;
 
+      let leftHandOperand: string | null = rightOperand;
+      if (leftOperand !== null && operator !== null)
+        leftHandOperand = evaluate(state as RemovesNullValue<CalculatorState>);
+
       return {
         operator,
-        leftOperand: rightOperand,
+        leftOperand: leftHandOperand,
         rightOperand: null,
       };
     }
@@ -39,7 +44,6 @@ export default function calculatorReducer(
     case "Delete-digit": {
       if (rightOperand === null && operator !== null)
         return {
-          ...state,
           rightOperand: leftOperand,
           leftOperand: null,
           operator: null,
@@ -52,11 +56,11 @@ export default function calculatorReducer(
     }
 
     case "Evaluate": {
-      if (operator == null || rightOperand == null || leftOperand == null)
+      if (operator === null || rightOperand === null || leftOperand === null)
         return state;
 
       return {
-        rightOperand: evaluate(state).toString(),
+        rightOperand: evaluate(state as RemovesNullValue<CalculatorState>),
         leftOperand: null,
         operator: null,
       };
